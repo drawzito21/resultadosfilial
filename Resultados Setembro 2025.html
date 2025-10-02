@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard de Performance Operacional - Setembro 2025</title>
+    <style>
+        /* Estilos Globais e Fundo Dark Mode */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #00bcd4;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 5px; }
+        h2 { font-size: 1.5em; margin-bottom: 30px; }
+
+        /* Contêiner de Dados - Dashboard Layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Estilo da Tabela */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #252526;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #3c3c3c;
+            padding: 12px 15px;
+            /* Alinhamento padrão: Centralizado (para Finalizados e Score) */
+            text-align: center; 
+        }
+        th {
+            background-color: #00bcd4;
+            color: #1a1a1a;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        tbody tr:hover {
+            background-color: #333333;
+        }
+        
+        /* Estilos Específicos da Tabela */
+        .setor td {
+            background-color: #00796b; 
+            color: #ffffff;
+            font-weight: bold;
+            text-align: left;
+            padding-left: 15px;
+            text-transform: uppercase;
+            font-size: 0.9em; 
+        }
+        
+        /* Linha de Total do Setor (Cor de destaque e ajustado para CENTRALIZAR os números) */
+        .total-setor td {
+            background-color: #004d40;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        /* Estilo para alinhar o texto Total (rótulo) à esquerda, mas só na primeira célula mesclada */
+        .total-label {
+            text-align: left !important;
+            padding-left: 15px;
+        }
+
+        /* Total Geral (Rodapé) */
+        tfoot td {
+            font-weight: bold;
+            background-color: #00bcd4;
+            color: #1a1a1a;
+            font-size: 1.1em;
+        }
+        /* Garantir que o rótulo do Total Geral na célula mesclada também esteja à esquerda */
+        tfoot .total-label {
+             text-align: left !important;
+             padding-left: 15px;
+        }
+        
+        /* CLASSE DE ALERTA: Aplicada a todos os scores abaixo de 4.70 */
+        .score-low {
+            background-color: #e57373;
+            color: #1a1a1a;
+            font-weight: bold;
+        }
+
+        /* Estilo da Análise e Insights */
+        .analise {
+            background: #252526;
+            padding: 25px;
+            border: 2px solid #00bcd4;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        .analise h3 {
+            color: #00bcd4;
+            margin-top: 0;
+            border-bottom: 2px solid #3c3c3c;
+            padding-bottom: 10px;
+        }
+        .analise p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Estilo para Nomes Clicáveis (Visual de Botão/Interativo) */
+        .attendant-name {
+            cursor: pointer;
+            text-decoration: none; 
+            color: #00bcd4;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            text-align: center; /* Mantém o nome no centro da célula */
+        }
+
+        .attendant-name:hover {
+            text-decoration: underline;
+            color: #ffffff;
+        }
+        
+        /* Estilos do MODAL (Pop-up) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .modal-content {
+            background-color: #252526;
+            margin: 15% auto;
+            padding: 20px;
+            border: 2px solid #00bcd4;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+        }
+        .modal-content h4 {
+            color: #00bcd4;
+            border-bottom: 1px solid #3c3c3c;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>DASHBOARD DE PERFORMANCE OPERACIONAL</h1>
+    <h2>IXC Soft Filial Campina Grande - Setembro / 2025</h2>
+
+    <div class="dashboard-container">
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Setor</th>
+                        <th style="width: 55%;">Atendente</th>
+                        <th style="width: 15%;">Finalizados</th>
+                        <th style="width: 15%;">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="setor"><td colspan="4">ESTOQUE</td></tr>
+                    <tr><td>Estoque</td><td class="attendant-name" data-name="Christian Marinho Diniz" data-comment="Está estável e entregando bons resultados">Christian Marinho Diniz</td><td>329</td><td>4,76</td></tr>
+                    <tr><td>Estoque</td><td class="attendant-name" data-name="André Luís Albuquerque Araújo" data-comment="Precisa finalizar mais atendimentos pelo tempo de empresa">André Luís Albuquerque Araújo</td><td>232</td><td>4,87</td></tr>
+                    <tr class="total-setor"><td colspan="2" class="total-label">Total estoque</td><td>561</td><td>4,82</td></tr>
+
+                    <tr class="setor"><td colspan="4">FINANCEIRO</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Pedro Melo" data-comment="Chegou recentemente e já está muito acima da média no setor">Pedro Melo</td><td>447</td><td>4,79</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Dayane Alves Gouveia" data-comment="Demonstrou aptidão em aceitar desafio da demanda da nfcom e ajuda aos colegas">Dayane Alves Gouveia</td><td>361</td><td>4,75</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Leandro Lima dos Santos" data-comment="Assume papel de maturidade de responsabilidades no setor">Leandro Lima dos Santos</td><td>315</td><td>4,85</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Valkênia R. de Araújo Soares" data-comment="Está evoluindo no setor e tem interesse em se desenvolver. Tem interesse no setor de análise de documentação e no de conteúdos">Valkênia R. de Araújo Soares</td><td>407</td><td>4,71</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Gabriel Davi Rocha Nobelino" data-comment="Esteve de férias e mesmo assim teve bom resultados">Gabriel Davi Rocha Nobelino</td><td>207</td><td class="score-low">4,67</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Maxsuel Borges da Silva" data-comment="Resultados abaixo do esperado, mas boa conduta (migração programada para setor de implantação)">Maxsuel Borges da Silva</td><td>294</td><td class="score-low">4,53</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Renata Henriques" data-comment="Tem compromisso com a empresa, aumentou a quantidade de atendimentos finalizados. Precisa trabalhar relacionamento interpessoal e controle emocional">Renata Henriques</td><td>275</td><td class="score-low">4,61</td></tr>
+                    <tr><td>Financeiro</td><td class="attendant-name" data-name="Carina Rocha de Souza Silva" data-comment="Score perfeito em baixo volume. Necessita de acompanhamento ao aumentar o volume.">Carina Rocha de Souza Silva</td><td>7</td><td>5,00</td></tr>
+                    <tr class="total-setor"><td colspan="2" class="total-label">Total financeiro</td><td>2313</td><td>4,73</td></tr>
+
+                    <tr class="setor"><td colspan="4">FISCAL</td></tr>
+                    <tr><td>Fiscal</td><td class="attendant-name" data-name="Luiz Henrique Pereira dos Santos" data-comment="Muitas ouvidorias abertas, mas não por culpa dele, já que a demanda no suporte fiscal está muito acima do normal">Luiz Henrique Pereira dos Santos</td><td>365</td><td class="score-low">3,72</td></tr>
+                    <tr><td>Fiscal</td><td class="attendant-name" data-name="Michele Ferreira Nóbrega" data-comment="Precisa ter cuidado na abertura de cartões e na reclamação sobre outros colaboradores aos colegas (falando de maiara a dayane)">Michele Ferreira Nóbrega</td><td>188</td><td>4,71</td></tr>
+                    <tr><td>Fiscal</td><td class="attendant-name" data-name="Janaina Francisca da Silva" data-comment="Alta demanda, está se esforçando para conseguir atender as expectativas do setor">Janaina Francisca da Silva</td><td>260</td><td class="score-low">3,93</td></tr>
+                    <tr><td>Fiscal</td><td class="attendant-name" data-name="Eric Davi Marinho Nunes de Sousa" data-comment="Demonstrou interesse e também ser muito sensível emocionalmente">Eric Davi Marinho Nunes de Sousa</td><td>110</td><td class="score-low">4,67</td></tr>
+                    <tr><td>Fiscal</td><td>Caroline de França Souza</td><td>0</td><td>0</td></tr> 
+                    <tr class="total-setor"><td colspan="2" class="total-label">Total fiscal</td><td>923</td><td class="score-low">3,93</td></tr>
+
+                    <tr class="setor"><td colspan="4">INTEGRAÇÕES</td></tr>
+                    <tr><td>Integrações</td><td class="attendant-name" data-name="André Yuri Ribeiro" data-comment="Resultados muito acima da média, posicionamentos ruins denotando individualismo e dificuldade de trabalhar em equipe (tende a ser apenas um produtor de números)">André Yuri Ribeiro</td><td>415</td><td>4,77</td></tr>
+                    <tr><td>Integrações</td><td class="attendant-name" data-name="Diego Rair de Souza" data-comment="Participou de testes com a Bruna Meredik e conseguiu entregar bons resultados no mês, mantendo bom score e relação positiva de finalizações">Diego Rair de Souza</td><td>234</td><td>4,86</td></tr>
+                    <tr class="total-setor"><td colspan="2" class="total-label">Total integrações</td><td>649</td><td>4,82</td></tr>
+
+                    <tr class="setor"><td colspan="4">INMAP</td></tr>
+                    <tr><td>INMAP</td><td class="attendant-name" data-name="Higor Sousa de Oliveira" data-comment="Score e finalizações excelentes; colaborador chave.">Higor Sousa de Oliveira</td><td>301</td><td>4,87</td></tr>
+                    <tr><td>INMAP</td><td class="attendant-name" data-name="Lais Mariane Da Silva Vieira Batista" data-comment="Melhor Score geral (4.91); potencial para mentoria.">Lais Mariane Da Silva Vieira Batista</td><td>106</td><td>4,91</td></tr>
+                    <tr><td>INMAP</td><td class="attendant-name" data-name="Vinicius Santos Barbosa" data-comment="Em desenvolvimento, mantendo boa qualidade.">Vinicius Santos Barbosa</td><td>52</td><td>4,70</td></tr>
+                    <tr><td>INMAP</td><td class="attendant-name" data-name="Bruno Cabral da Silva" data-comment="Score necessita atenção.">Bruno Cabral da Silva</td><td>96</td><td class="score-low">4,52</td></tr>
+                    <tr class="total-setor"><td colspan="2" class="total-label">Total inmap</td><td>555</td><td>4,80</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="total-label">Total geral</td>
+                        <td>5001</td>
+                        <td>4,72</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="analise">
+            <h3>ANÁLISE ESTRATÉGICA</h3>
+            <p>A equipe finalizou um volume robusto de **5.001 atendimentos** no período, com uma **Qualidade Média Global de 4.72**. Este resultado está alinhado com as metas de produtividade da companhia.</p>
+            
+            <h4>DESTAQUES DE EXCELÊNCIA</h4>
+            <p>Os setores **Integrações (4.82)**, **Estoque (4.82)** e **INMAP (4.80)** demonstram excelência consistente em Qualidade, com ênfase no alto *Score* individual de **Lais Mariane (4.91)** e **André Luís (4.87)**.</p>
+
+            <h4>VOLUME E EQUILÍBRIO</h4>
+            <p>O setor **Financeiro** é o mais produtivo, responsável por $46\%$ do volume total (**2313 finalizados**), e consegue manter um Score sólido de **4.73**.</p>
+            
+            <h4 style="color: #e57373;">PONTO DE ATENÇÃO: SCORES < 4.70</h4>
+            <p>Os resultados individuais **abaixo de 4.70**, juntamente com o Score Médio do **Fiscal (3.93)**, exigem intervenção imediata para **revisão de processos**, reforço no treinamento e auditoria de qualidade. </p>
+            
+            <p style="font-size: 0.9em; margin-top: -10px;">*A atendente Caroline de França Souza está em período de **onboarding/treinamento**; o resultado de 0 não reflete performance e está em acompanhamento de desenvolvimento.*</p>
+            
+            <h4 style="color: #00bcd4;">PRÓXIMOS PASSOS:</h4>
+            <ul>
+                <li>Lançar **Plano de Reforço de Qualidade (PRQ)** no setor Fiscal.</li>
+                <li>Criar um programa de **Mentoria Interna** usando *High-Performers* dos setores de excelência.</li>
+                <li>Avaliar **balanceamento de carga** e necessidade de **automação (RPA)** no Financeiro.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="commentModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h4 id="modalName"></h4>
+        <p id="modalComment"></p>
+      </div>
+    </div>
+    
+    <script>
+    var modal = document.getElementById("commentModal");
+    var span = document.getElementsByClassName("close")[0];
+    var attendants = document.getElementsByClassName("attendant-name");
+    var modalName = document.getElementById("modalName");
+    var modalComment = document.getElementById("modalComment");
+
+    // Função para abrir o modal
+    for (var i = 0; i < attendants.length; i++) {
+        attendants[i].onclick = function() {
+            modalName.textContent = this.getAttribute('data-name');
+            modalComment.textContent = this.getAttribute('data-comment');
+            modal.style.display = "block";
+        }
+    }
+
+    // Função para fechar o modal (clicando no X)
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Função para fechar o modal (clicando fora)
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    </script>
+</body>
+</html>
